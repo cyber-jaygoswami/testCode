@@ -1,2 +1,1 @@
-window.alert("Hello........");
-// somedohrfrkf
+console.log("Hello Krupali");
