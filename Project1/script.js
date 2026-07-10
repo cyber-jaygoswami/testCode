@@ -1,3 +1,6 @@
 console.log("feffe");
 window.alert('fdfdfd');
-var x= 23;
+var x;    // dynamic typing
+
+
+
