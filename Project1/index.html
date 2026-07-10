@@ -2,9 +2,376 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVOUR - Luxury Culinary Experience</title>
+
+    <!-- UI & Icon Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Performance Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #070708; color: #e4e4e7; overflow-x: hidden; }
+        .serif { font-family: 'Playfair Display', serif; }
+
+        /* Layout Wrappers */
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 64px; align-items: center; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; gap: 32px; } }
+
+        /* Premium Glass Design Elements */
+        .glass { background: rgba(15, 15, 18, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.04); }
+        .gold-text { background: linear-gradient(135deg, #dfba73 0%, #c5a880 50%, #9e8259 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Navigation Styles */
+        nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 40; padding: 16px 64px; display: flex; justify-content: space-between; align-items: center; }
+        @media (max-width: 768px) { nav { padding: 16px 24px; } }
+        nav a { text-decoration: none; color: #fff; }
+        .nav-links { display: flex; list-style: none; gap: 40px; }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+        .nav-links a { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+        .nav-links a:hover { color: #c5a880; }
+
+        /* Primary Buttons */
+        .btn-gold { background-color: #c5a880; color: #000; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 24px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block; }
+        .btn-gold:hover { background-color: #ffffff; transform: scale(1.05); }
+        .btn-white { background-color: #ffffff; color: #000; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 16px 32px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block; }
+        .btn-white:hover { background-color: #c5a880; transform: scale(1.05); }
+
+        #menu-open { background: none; border: none; color: white; font-size: 24px; cursor: pointer; display: none; }
+        @media (max-width: 768px) { #menu-open { display: block; } .btn-nav-hide { display: none; } }
+
+        /* Mobile Drawer Architecture */
+        #mobile-nav { position: fixed; inset: 0; background-color: #070708; z-index: 50; transform: translateX(100%); transition: transform 0.4s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px; }
+        #mobile-nav a { color: white; font-size: 24px; text-decoration: none; transition: color 0.3s; }
+        #mobile-nav a:hover { color: #c5a880; }
+        #menu-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: white; font-size: 32px; cursor: pointer; }
+
+        /* Custom Interactive Elements */
+        #cursor { position: fixed; width: 32px; height: 32px; border: 1px solid #c5a880; border-radius: 50%; pointer-events: none; z-index: 50; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; mix-blend-mode: difference; }
+        @media (max-width: 1024px) { #cursor { display: none; } }
+
+        /* Cinematic Sections */
+        .hero { position: relative; min-height: 100vh; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; }
+        #hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.4; transform: scale(1.1); transition: transform 0.3s ease-out; }
+        .hero-gradient { position: absolute; inset: 0; background: linear-gradient(to top, #070708, transparent, #070708); }
+        .hero-content { position: relative; z-index: 10; max-width: 600px; }
+        .hero-sub { color: #c5a880; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4em; margin-bottom: 16px; display: inline-block; }
+        .hero-title { color: white; font-size: 80px; font-weight: 900; line-height: 1.1; margin-bottom: 24px; }
+        @media (max-width: 768px) { .hero-title { font-size: 48px; } }
+        .hero-desc { color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 32px; }
+
+        /* Food Card Modules */
+        .section-padding { padding: 112px 0; }
+        .bg-dark-card { background-color: #0c0c0e; }
+        .text-center { text-align: center; }
+        .section-sub { color: #c5a880; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; display: block; margin-bottom: 8px; }
+        .section-title { color: white; font-size: 48px; font-weight: 600; margin-bottom: 16px; }
+        @media (max-width: 768px) { .section-title { font-size: 36px; } }
+        .divider { width: 48px; height: 2px; background-color: #c5a880; margin: 16px auto 0 auto; }
+
+        /* Tabs Filter Menu */
+        .filter-container { display: flex; justify-content: center; gap: 32px; margin-bottom: 64px; overflow-x: auto; padding-bottom: 8px; }
+        .filter-tab { background: none; border: none; border-bottom: 2px solid transparent; padding-bottom: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.3s; }
+        .filter-tab.active { color: #c5a880; border-color: #c5a880; }
+        .filter-tab.inactive { color: #71717a; }
+        .filter-tab.inactive:hover { color: white; }
+
+        /* Culinary Grid Panels */
+        .food-item { border-radius: 24px; overflow: hidden; transition: all 0.5s; }
+        .food-item:hover { transform: translateY(-8px); }
+        .food-img-frame { height: 288px; overflow: hidden; position: relative; }
+        .food-img-frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+        .food-item:hover .food-img-frame img { transform: scale(1.1); }
+        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.6); color: #c5a880; padding: 6px 12px; border-radius: 50px; backdrop-filter: blur(8px); }
+        .food-details { padding: 32px; }
+        .food-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .food-title { color: white; font-size: 20px; font-weight: 700; transition: color 0.3s; }
+        .food-item:hover .food-title { color: #c5a880; }
+        .food-price { color: #c5a880; font-weight: 700; font-size: 18px; }
+        .food-desc { color: #a1a1aa; font-size: 12px; line-height: 1.6; }
+
+        /* Asymmetry Grid Block Elements */
+        .aspect-frame { border-radius: 24px; overflow: hidden; aspect-ratio: 4/5; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; }
+        .aspect-frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s; }
+        .aspect-frame:hover img { transform: scale(1.05); }
+        .about-text-panel p { color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+        .mini-features { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+        .feature-box { border-left: 2px solid #c5a880; padding-left: 16px; }
+        .feature-box h4 { color: white; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+        .feature-box p { color: #71717a; font-size: 11px; margin: 0; }
+
+        /* Chef Components */
+        .chef-avatar { width: 128px; height: 128px; margin: 0 auto 24px auto; border-radius: 50%; overflow: hidden; border: 2px solid #c5a880; padding: 4px; }
+        .chef-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .chef-name { color: white; font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+        .chef-role { color: #c5a880; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 24px; }
+        .chef-quote { color: #a1a1aa; font-size: 14px; font-style: italic; line-height: 1.6; max-width: 650px; margin: 0 auto; }
+        .signature-img { height: 40px; margin-top: 32px; filter: invert(1); opacity: 0.4; }
+
+        /* Premium Minimal Footer */
+        footer { padding: 48px 0; border-top: 1px solid #18181b; text-align: center; font-size: 11px; color: #71717a; }
+        footer .logo { font-size: 18px; color: white; letter-spacing: 0.15em; margin-bottom: 16px; }
+        .social-icons { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; font-size: 16px; }
+        .social-icons a { color: #a1a1aa; transition: color 0.3s; text-decoration: none; }
+        .social-icons a:hover { color: #c5a880; }
+
+        /* Custom Native Scrollbar Override */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #070708; }
+        ::-webkit-scrollbar-thumb { background: #222226; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c5a880; }
+    </style>
 </head>
 <body>
-    
+
+    <!-- Smooth Dynamic Custom Cursor -->
+    <div id="cursor" class="fixed w-8 h-8 border border-[#c5a880] rounded-full pointer-events-none z-50 hidden lg:block transition-transform duration-700 ease-out -translate-x-1/2 -translate-y-1/2 mix-blend-difference"></div>
+
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 w-full z-40 glass py-4 px-6 lg:px-16 flex justify-between items-center">
+        <a href="#" class="serif text-2xl font-bold tracking-widest text-white">hello jay sir i am dhiraj<span class="text-[#c5a880]">.</span></a>
+
+        <ul class="hidden md:flex space-x-10 text-xs font-semibold tracking-widest uppercase">
+            <li><a href="#home" class="hover:text-[#c5a880] transition-colors">Home</a></li>
+            <li><a href="#menu" class="hover:text-[#c5a880] transition-colors">food</a></li>
+            <li><a href="#about" class="hover:text-[#c5a880] transition-colors">Story</a></li>
+            <li><a href="#chef" class="hover:text-[#c5a880] transition-colors">Chef</a></li>
+        </ul>
+
+        <div class="hidden md:flex items-center space-x-6">
+            <button class="bg-[#c5a880] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-full hover:bg-white hover:scale-105 transition-all duration-300">Reserve</button>
+        </div>
+
+        <button id="menu-open" class="md:hidden text-white text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+    </nav>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-nav" class="fixed inset-0 bg-[#070708] z-50 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8 text-2xl serif">
+        <button id="menu-close" class="absolute top-6 right-6 text-white text-3xl"><i class="fa-solid fa-xmark"></i></button>
+        <a href="#home" class="nav-m-link text-white hover:text-[#c5a880]">Home</a>
+        <a href="#menu" class="nav-m-link text-white hover:text-[#c5a880]">The Menu</a>
+        <a href="#about" class="nav-m-link text-white hover:text-[#c5a880]">Our Story</a>
+        <a href="#chef" class="nav-m-link text-white hover:text-[#c5a880]">The Chef</a>
+    </div>
+
+    <!-- Cinematic Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center opacity-40 scale-110 transition-transform duration-300 ease-out" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-[#070708]"></div>
+
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <span id="h-sub" class="inline-block text-[#c5a880] text-xs font-bold uppercase tracking-[0.4em] mb-4 opacity-0">A New Era of Fine Dining</span>
+            <h1 id="h-title" class="serif text-5xl md:text-8xl text-white font-black leading-tight mb-6 opacity-0">
+                Poetry On A <br><span class="gold-text">Plate</span>
+            </h1>
+            <p id="h-desc" class="max-w-xl mx-auto text-gray-400 text-xs md:text-sm leading-relaxed mb-8 opacity-0">
+                Immersive culinary masterworks designed by taste alchemists. Experience raw seasonal ingredients transformed into avant-garde sensory history.
+            </p>
+            <div id="h-btns" class="opacity-0">
+                <a href="#menu" class="inline-block bg-white text-black font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-full hover:bg-[#c5a880] hover:scale-105 transition-all duration-300 shadow-xl">Menu</a>
+            </div>
+        </div>
+    </section>
+
+       <!-- Interactive Menu Grid & Filter System -->
+    <section id="menu" class="py-28 bg-[#0c0c0e]">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal-y">
+                <span class="text-[#c5a880] text-xs font-bold uppercase tracking-[0.3em] block mb-2">Curated Selections</span>
+                <h2 class="serif text-4xl md:text-6xl text-white font-semibold">Seasonal Masterpieces</h2>
+                <div class="w-12 h-[2px] bg-[#c5a880] mx-auto mt-4"></div>
+            </div>
+
+            <!-- Custom Category Switcher -->
+            <div class="flex justify-center space-x-4 md:space-x-8 mb-16 overflow-x-auto pb-2 reveal-y">
+                <button class="filter-tab px-6 py-2 text-xs uppercase font-bold tracking-widest text-[#c5a880] border-b-2 border-[#c5a880]" data-cat="all">All Plates</button>
+                <button class="filter-tab px-6 py-2 text-xs uppercase font-bold tracking-widest text-gray-500 border-b-2 border-transparent hover:text-white" data-cat="mains">Mains</button>
+                <button class="filter-tab px-6 py-2 text-xs uppercase font-bold tracking-widest text-gray-500 border-b-2 border-transparent hover:text-white" data-cat="desserts">Desserts</button>
+            </div>
+
+            <!-- Adaptive Grid Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="grid-box">
+                <!-- Item 1 -->
+                <div class="food-item glass rounded-3xl overflow-hidden group transition-all duration-500 hover:-translate-y-2" data-cat="mains">
+                    <div class="overflow-hidden h-72 relative">
+                        <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=900&auto=format&fit=crop" alt="Wagyu" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <span class="absolute top-4 right-4 text-xs font-bold uppercase tracking-widest bg-black/60 text-[#c5a880] px-3 py-1.5 rounded-full backdrop-blur-md">Signature</span>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="serif text-xl text-white font-bold group-hover:text-[#c5a880] transition-colors">A5 Smoked Wagyu</h3>
+                            <span class="text-[#c5a880] font-bold text-lg">$145</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed">Truffle marrow reduction, charred heirloom roots, gold-dusted micro greens.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="food-item glass rounded-3xl overflow-hidden group transition-all duration-500 hover:-translate-y-2" data-cat="desserts">
+                    <div class="overflow-hidden h-72">
+                        <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=900&auto=format&fit=crop" alt="Berry Dessert" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="serif text-xl text-white font-bold group-hover:text-[#c5a880] transition-colors">Molecular Berry Shell</h3>
+                            <span class="text-[#c5a880] font-bold text-lg">$38</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed">White chocolate structural core, liquid nitrogen strawberry essence, basil gel.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="food-item glass rounded-3xl overflow-hidden group transition-all duration-500 hover:-translate-y-2" data-cat="mains">
+                    <div class="overflow-hidden h-72">
+                        <img src="https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=900&auto=format&fit=crop" alt="Seafood" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="serif text-xl text-white font-bold group-hover:text-[#c5a880] transition-colors">Atlantic Halibut Crudo</h3>
+                            <span class="text-[#c5a880] font-bold text-lg">$62</span>
+                        </div>
+                        <p class="text-gray-400 text-xs leading-relaxed">Citrus broth pearls, wild kelp oil extraction, pickled sea fennel flakes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Split Story Section with Dynamic Asymmetry -->
+    <section id="about" class="py-28 relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="relative group reveal-left">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-[#c5a880] to-transparent rounded-3xl blur opacity-20"></div>
+                    <div class="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1577106263724-2c8e03bfe9cf?q=80&w=1200&auto=format&fit=crop" alt="Culinary Art" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-105">
+                    </div>
+                </div>
+                <div class="reveal-right">
+                    <span class="text-[#c5a880] text-xs font-bold uppercase tracking-[0.3em] block mb-2">Our Manifesto</span>
+                    <h2 class="serif text-4xl md:text-5xl text-white font-bold mb-6 leading-tight">Where Science Elevates Organic Nature</h2>
+                    <p class="text-gray-400 text-xs md:text-sm leading-relaxed mb-6">
+                        We isolate the volatile flavour molecules of natural ingredients and re-engineer them. Every menu creation takes weeks of development inside our culinary laboratory.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 mt-8">
+                        <div class="border-l-2 border-[#c5a880] pl-4">
+                            <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-1">Micro-Farming</h4>
+                            <p class="text-[11px] text-gray-500">100% Traceable biodynamic crops.</p>
+                        </div>
+                        <div class="border-l-2 border-[#c5a880] pl-4">
+                            <h4 class="text-white font-bold text-xs uppercase tracking-widest mb-1">Avant-Garde</h4>
+                            <p class="text-[11px] text-gray-500">Molecular gastronomy systems.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Master Chef Showcase (Signature & Quote) -->
+    <section id="chef" class="py-28 bg-[#0c0c0e]">
+        <div class="container mx-auto px-6 text-center max-w-2xl reveal-y">
+            <span class="text-[#c5a880] text-xs font-bold uppercase tracking-[0.3em] block mb-2">The Culinary Alchemist</span>
+            <div class="w-32 h-32 mx-auto rounded-full overflow-hidden border-2 border-[#c5a880] mb-6 p-1">
+                <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=400&auto=format&fit=crop" alt="Chef" class="w-full h-full object-cover rounded-full">
+            </div>
+            <h3 class="serif text-3xl text-white font-bold mb-1">Chef Jean-Luc Savour</h3>
+            <p class="text-[#c5a880] text-xs uppercase tracking-widest font-semibold mb-6">Founding Executive Chef</p>
+            <p class="text-gray-400 text-xs md:text-sm italic leading-relaxed">
+                "Taste is a profound emotional trigger locked within natural structures. Our single purpose is to engineer the perfect key to unlock those memories."
+            </p>
+            <div class="mt-8">
+                <svg class="signature-img mx-auto" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="35" font-family="'Playfair Display', serif" font-size="32" font-style="italic" fill="#ffffff">J. Savour</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clean Premium Footer -->
+    <footer class="py-12 border-t border-zinc-900 bg-[#070708]">
+        <div class="container mx-auto px-6 text-center text-[11px] text-gray-600 space-y-4">
+            <p class="serif text-white text-base tracking-widest">SAVOUR<span class="text-[#c5a880]">.</span></p>
+            <div class="flex justify-center space-x-6 text-sm text-gray-400">
+                <a href="#" class="hover:text-[#c5a880]"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-[#c5a880]"><i class="fa-brands fa-pinterest-p"></i></a>
+            </div>
+            <p>&copy; 2026 SAVOUR. Designed for luxury culinary interfaces.</p>
+        </div>
+    </footer>
+
+    <!-- Comprehensive Scripts for Dynamic Motion & Filters -->
+    <script>
+        // Smooth Mouse Tracking Custom Cursor
+        const cursorBox = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursorBox.style.left = e.clientX + 'px';
+            cursorBox.style.top = e.clientY + 'px';
+        });
+
+        // Immersive Hero Parallax Movement
+        document.addEventListener('mousemove', (e) => {
+            const background = document.getElementById('hero-bg');
+            const offsetX = (window.innerWidth / 2 - e.clientX) / 60;
+            const offsetY = (window.innerHeight / 2 - e.clientY) / 60;
+            background.style.transform = `scale(1.1) translate(${offsetX}px, ${offsetY}px)`;
+        });
+
+        // Mobile Menu View Management
+        const openBtn = document.getElementById('menu-open');
+        const closeBtn = document.getElementById('menu-close');
+        const mobileView = document.getElementById('mobile-nav');
+        const clickLinks = document.querySelectorAll('.nav-m-link');
+        openBtn.addEventListener('click', () => mobileView.classList.remove('translate-x-full'));
+        closeBtn.addEventListener('click', () => mobileView.classList.add('translate-x-full'));
+        clickLinks.forEach(link => link.addEventListener('click', () => mobileView.classList.add('translate-x-full')));
+
+        // High-Fidelity Entrance GSAP Transitions
+        window.addEventListener('DOMContentLoaded', () => {
+            const animationTimeline = gsap.timeline();
+            animationTimeline
+                .to("#h-sub", { opacity: 1, y: 0, duration: 0.6, delay: 0.2 })
+                .to("#h-title", { opacity: 1, y: 0, duration: 0.7 }, "-=0.3")
+                .to("#h-desc", { opacity: 1, y: 0, duration: 0.5 }, "-=0.4")
+                .to("#h-btns", { opacity: 1, y: 0, duration: 0.5 }, "-=0.4");
+        });
+
+        // Scroll-Triggered View Transitions
+        const scrollEngine = ScrollReveal({ origin: 'bottom', distance: '50px', duration: 900, delay: 150, reset: false });
+        scrollEngine.reveal('.reveal-y');
+        scrollEngine.reveal('.reveal-left', { origin: 'left' });
+        scrollEngine.reveal('.reveal-right', { origin: 'right' });
+
+        // Dynamic Menu Items Content Filter Engine
+        const tabs = document.querySelectorAll('.filter-tab');
+        const elements = document.querySelectorAll('.food-item');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.classList.remove('text-[#c5a880]', 'border-[#c5a880]');
+                    t.classList.add('text-gray-500', 'border-transparent');
+                });
+                tab.classList.add('text-[#c5a880]', 'border-[#c5a880]');
+                tab.classList.remove('text-gray-500', 'border-transparent');
+                const chosenCategory = tab.getAttribute('data-cat');
+                elements.forEach(item => {
+                    if (chosenCategory === 'all' || item.getAttribute('data-cat') === chosenCategory) {
+                        item.style.display = 'block';
+                        gsap.fromTo(item, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.4 });
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

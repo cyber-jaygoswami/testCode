@@ -1,2 +1,1 @@
-window.alert("fde");
-// somedohrfrkf
+console.log("Hello Krupali");
