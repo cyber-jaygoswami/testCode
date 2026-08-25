@@ -1,14 +1,16 @@
 [
     {
-        "name" : "Spiderman",
+      "title" : "Spiderman" ,
+      "year" : 2026
+    },
+    {
+        "title" : "Batman",
         "year" : 2023
     },
     {
-        "name" : "Batman",
-        "year" : 2025
-    },
-    {
-        "name" : "Dhurandhar",
+        "title" : "Dhurandhar",
         "year" : 2025
     }
+
+
 ]
